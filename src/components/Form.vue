@@ -38,7 +38,7 @@
         <h3 class="subtitle">
           Исходный
         </h3>
-        <UserList :users="store.state.user.users" :text="'Добавьте пользователей'" :canDelete="true"/>
+        <UserList :users="store.state.user.users" :text="'Добавьте пользователей'" :canDelete="true" :isLoading="store.state.user.isUserLoading"/>
       </div>
     </div>
 </template>

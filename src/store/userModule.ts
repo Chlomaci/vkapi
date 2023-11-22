@@ -15,9 +15,11 @@ interface IUserSearch {
   friends: IUserMini[],
   duplicates: IDuplicate[],
   userFriends: IUserMini[],
+  isUserLoading: boolean,
   isFriendsLoading: boolean,
   isUserFriendsLoading: boolean,
-  posts: IPost[]
+  posts: IPost[],
+  isPostsLoading: boolean,
   errors: errors;
 }
 
@@ -31,9 +33,11 @@ export const userModule = {
     friends: [],
     duplicates: [],
     userFriends: [],
+    isUserLoading: false,
     isFriendsLoading: false,
     isUserFriendsLoading: false,
     posts: [],
+    isPostsLoading: false,
     errors: {
       twoValues: false,
       nullValues: false,
@@ -124,11 +128,17 @@ export const userModule = {
         repost: payload.copy_history ? payload.copy_history[0]?.text : undefined,
       })
     },
+    setUserLoading(state){
+      state.isUserLoading = !state.isUserLoading;
+    },
     setFriendsLoading(state) {
       state.isFriendsLoading = !state.isFriendsLoading;
     },
     setUserFriendsLoading(state){
       state.isUserFriendsLoading = !state.isUserFriendsLoading;
+    },
+    setPostsLoading(state){
+      state.isPostsLoading = !state.isPostsLoading;
     },
     setDuplicates(state, payload: IDuplicate[]){
       state.duplicates = payload;

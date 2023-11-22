@@ -36,8 +36,6 @@ const onBuilding = async () => {
   resetError()
   store.commit('user/setFriendsLoading');
   await onGettingFriends();
-  console.log('сделано');
-
 }
 
 const onGettingFriends = async () => {
@@ -47,15 +45,28 @@ const onGettingFriends = async () => {
   const allFriends = allFriendsArrs.flat()
   const {duplicates, duplicateIds} = getDuplicates(allFriends);
   const friends = removeDuplicates(allFriends, duplicateIds);
-  console.log(friends)
   store.commit('user/setDuplicates', duplicates)
 
   const friendsChunked = chunkArray(friends, 5);
-  Promise.all(friendsChunked.map(async (chunk, index) => {
-    setTimeout(  async function () {
-      await chunk.forEach(id => onSetNewUser(id, {isFriend: true}))
-    }, 3000 * (index + 1));
-  })).then(() => console.log('bla'))
+
+  // Promise.all(friendsChunked.map(async (chunk, index) => {
+  //    setTimeout(  async function () {
+  //     await chunk.forEach(id => onSetNewUser(id, {isFriend: true}))
+  //   }, 3000 * (index + 1));
+  // })).finally(() => store.commit('user/setFriendsLoading'))
+
+
+  const loading = await new Promise((resolve, reject) => {
+    friendsChunked.map(async (chunk, index) => {
+       setTimeout(  async function () {
+        await chunk.forEach(id => onSetNewUser(id, {isFriend: true}))
+      }, 3000 * (index + 1));
+    })
+  }).finally(() => {
+    console.log('then');
+    store.commit('user/setFriendsLoading')
+  })
+  console.log('loaded')
 
 }
 
@@ -79,23 +90,21 @@ function nullAccess() {
   store.commit('user/setNullAccessError');
 }
 
-const onSubmit = () => {
+const onSubmit = async () => {
   resetError();
   if (!store.state.token.access_token) {
     nullAccess();
   } else if (store.state.user.userName && store.state.user.userId) {
-    console.log(`first case ${store.state.user.userName} ${store.state.user.userId}`)
     isTwoValues();
   } else if (!store.state.user.userName && !store.state.user.userId) {
-    console.log(`second case ${store.state.user.userName} ${store.state.user.userId}`)
     isNullValues()
   } else if (store.state.user.userId) {
-    console.log(`third case ${store.state.user.userName} ${store.state.user.userId}`)
-    onSetNewUser(store.state.user.userId, {isAuto: false})
+    store.commit('user/setUserLoading')
+    await onSetNewUser(store.state.user.userId, {isAuto: false})
+    store.commit('user/setUserLoading');
     store.commit('user/setUserId', '')
   } else if (store.state.user.userName){
-    console.log(`four case ${store.state.user.userName} ${store.state.user.userId}`)
-    store.commit('user/setLoadedUser', store.state.user.userName);
+    await store.commit('user/setLoadedUser', store.state.user.userName);
     store.commit('user/setUserName', '')
   }
 }

@@ -2,6 +2,9 @@
   <div class="list__content">
     <div v-if="users.length > 0"
          class="list__users">
+      <div class="loader__mini" v-show="isLoading">
+        <img :src="spinner" alt="">
+      </div>
       <div class="list__item"
           :style="[canDelete ? {justifyContent: 'space-between'} : null]"
            v-for="user in props.users"
@@ -14,11 +17,11 @@
         <button v-show="canDelete" class="list__delete" :disabled="store.state.user.isFriendsLoading" @click="onUserDelete(user)"></button>
       </div>
     </div>
-    <div class="list__empty" v-else>
-        <div v-if="store.state.user.isFriendsLoading">
-          <img  :src="spinner" alt="">
-        </div>
-        <div class="list__text" v-else>{{text}}</div>
+    <div class="list__empty" v-else-if="props.users.length == 0 && isLoading">
+      <img :src="spinner" alt="">
+    </div>
+    <div class="list__empty" v-else-if="!isLoading">
+        <div class="list__text">{{text}}</div>
     </div>
   </div>
 </template>
@@ -32,7 +35,8 @@ import spinner from '@/assets/spinner.svg'
 interface Props {
   users: IUserMini[],
   text: string,
-  canDelete: boolean
+  canDelete: boolean,
+  isLoading: boolean,
 }
 
 const props = defineProps<Props>();
@@ -90,6 +94,14 @@ const onUserDelete = async (user) => {
     background-image: url('@/assets/close.svg');
     background-size: contain;
     background-repeat: no-repeat;
+  }
+}
+
+.loader__mini{
+  margin: 0 auto;
+  img{
+    width: 50px;
+    height: 50px;
   }
 }
 </style>

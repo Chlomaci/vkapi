@@ -15,7 +15,7 @@ export function useApi() {
 
   function getAccess() {
     const url: URL = new URL(document.location)
-    if (url.toString().length > 'https://chlomaci.github.io/vkapi/'.length) {
+    if (url.toString().length > 'http://localhost:3000/'.length) {
       const token: string = url.hash
         .split('&')
         .filter(function(el: string) { if(el.match('access_token') !== null) return true; })[0]
@@ -30,7 +30,6 @@ export function useApi() {
 
   async function onGetAutoUsers() {
     const friends = await getFriends();
-    console.log(friends)
     onSetNewUser(friends, {isAuto: true});
   }
 
@@ -85,7 +84,6 @@ export function useApi() {
       .then(resp => resp.json())
       .then((data: IPostResponse) => {
         const posts: IPostData[] = data.response.items;
-        console.log(posts)
         posts.map(e => {
           store.commit('user/setPosts', {
             date: e.date,

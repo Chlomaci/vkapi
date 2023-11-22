@@ -15,7 +15,7 @@
           Друзья пользователя
         </h3>
 
-        <UserList :users="store.state.user.userFriends" :text="'У пользователя нет друзей'" :canDelete="false"/>
+        <UserList :users="store.state.user.userFriends" :text="'У пользователя нет друзей'" :canDelete="false" :isLoading="store.state.user.isUserFriendsLoading"/>
       </div>
 
       <div class="user__posts">
@@ -50,10 +50,10 @@
             </div>
           </div>
           <div class="list__empty" v-else>
-            <div v-if="store.state.user.isFriendsLoading">
+            <div v-if="store.state.user.isPostsLoading">
               <img  :src="spinner" alt="">
             </div>
-            <div class="list__text" v-else>{{text}}</div>
+            <div class="list__text" v-else>У пользователя нет постов</div>
           </div>
         </div>
       </div>
@@ -62,18 +62,18 @@
 </template>
 
 <script setup lang="ts">
+import UserList from '@/components/UserList'
 import {useStore} from "vuex";
 import {useRoute} from "vue-router";
-import UserList from '@/components/UserList'
 import {IUserMini} from "@/types/types";
 import {useApi} from "@/hooks/useApi";
 import {onMounted, onUnmounted} from "vue";
+import spinner from '@/assets/spinner.svg'
 
 const store = useStore()
 const route = useRoute()
 
 const user = store.state.user.friends.find(friend => friend.id == `${route.params.id}`)
-console.log(user)
 const posts = store.state.user.posts;
 const {getFriends, onSetNewUser, getPosts} = useApi()
 
@@ -81,22 +81,22 @@ async function checkFriends(id: number, users: IUserMini[]) {
   const friends = await getFriends(id);
   const usersIds: number[] = users.map(e => e.id);
   const friendsFromUsers = friends.filter(id => usersIds.includes(id))
-  onSetNewUser(friendsFromUsers, {isUserFriend: true},)
+  await onSetNewUser(friendsFromUsers, {isUserFriend: true},)
 }
 
 const loadUserData = async (id) => {
+  store.commit('user/setPostsLoading')
   await getPosts(id)
+  store.commit('user/setPostsLoading')
   await checkFriends(id, store.state.user.users)
     .then(() => {
       store.commit('user/setUserFriendsLoading');
     });
 }
-console.log(user.id)
 loadUserData(user.id)
 
 onMounted(() => {
   store.commit('user/setUserFriendsLoading');
-  console.log('mounted');
 })
 
 onUnmounted( () => {
@@ -104,6 +104,7 @@ onUnmounted( () => {
   store.commit('user/resetPosts')
 
   if (store.state.user.isUserFriendsLoading) {
+    console.log('loading')
     store.commit('user/setUserFriendsLoading');
   }
 })
@@ -150,6 +151,7 @@ onUnmounted( () => {
   width: 30vw;
   overflow: auto;
   border: 1px rgb(0, 0, 0, 0.5) solid;
+  position: relative;
   &__title {
     display: flex;
   }
