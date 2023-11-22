@@ -4,7 +4,7 @@
       Клик для получения токена
     </a>
     <div class="main__content">
-      <div class="search__form" @submit.prevent="onSubmit">
+      <div class="search__form">
         <Form/>
         <ButtonArea/>
         <Friends/>
@@ -19,10 +19,7 @@ import {useApi} from "@/hooks/useApi";
 
 import Friends from '@/components/Friends.vue'
 import Form from '@/components/Form.vue'
-import {useStore} from "vuex";
 import ButtonArea from "@/components/ButtonArea.vue";
-
-
 
 onMounted( async () => {
   const {getAccess} = useApi()

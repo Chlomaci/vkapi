@@ -1,6 +1,4 @@
-import {IDuplicate, IUserMini} from "@/types/types";
-import {useApi} from "@/hooks/useApi";
-
+import {IDuplicate} from "@/types/types";
 
 export function chunkArray(array, chunk) {
   const newArray = [];

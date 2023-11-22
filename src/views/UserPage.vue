@@ -1,7 +1,7 @@
 <template>
   <div class="user__page">
     <router-link to="/">
-      <v-btn class="exit__btn" variant="tonal" @click="onBack">Назад</v-btn>
+      <v-btn class="exit__btn" variant="tonal">Назад</v-btn>
     </router-link>
 
     <div class="user__card">
