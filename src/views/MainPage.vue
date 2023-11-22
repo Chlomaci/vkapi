@@ -1,11 +1,14 @@
 <template>
   <div class="main">
-    <a href="https://oauth.vk.com/authorize?client_id=51795832&display=page&redirect_uri=http://localhost:3000/&scope=friends&response_type=token&v=5.131&state=123456">
+    <a href="https://oauth.vk.com/authorize?client_id=51795832&display=page&redirect_uri=https://chlomaci.github.io/vkapi/&scope=friends&response_type=token&v=5.131&state=123456">
       Клик для получения токена
     </a>
     <div class="main__content">
-      <Form/>
-      <Friends/>
+      <div class="search__form" @submit.prevent="onSubmit">
+        <Form/>
+        <ButtonArea/>
+        <Friends/>
+      </div>
     </div>
   </div>
 </template>
@@ -14,8 +17,12 @@
 import {onMounted} from "vue";
 import {useApi} from "@/hooks/useApi";
 
-import Friends from './Friends'
-import Form from './Form'
+import Friends from '@/components/Friends.vue'
+import Form from '@/components/Form.vue'
+import {useStore} from "vuex";
+import ButtonArea from "@/components/ButtonArea.vue";
+
+
 
 onMounted( async () => {
   const {getAccess} = useApi()
@@ -44,6 +51,16 @@ onMounted( async () => {
     width: 51vw;
   }
 }
+
+.search{
+  &__form{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 55vw;
+  }
+}
+
 
 
 </style>

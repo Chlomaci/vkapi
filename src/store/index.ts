@@ -1,11 +1,14 @@
-import {createStore} from "vuex";
+import { InjectionKey } from 'vue'
+import {createStore, useStore as baseUseStore, Store} from "vuex";
 import {tokenModule} from "@/store/tokenModule";
 import {userModule} from "@/store/userModule";
-import {friendsModule} from "@/store/friendsModule";
+import {friendsModule, IUserSearch} from "@/store/friendsModule";
 
-export default createStore ({
+export const key: InjectionKey<Store<IUserSearch>> = Symbol()
+
+export default createStore({
     state: {
-    },
+    } ,
     modules: {
       token: tokenModule,
       user: userModule,
@@ -14,3 +17,6 @@ export default createStore ({
   }
 )
 
+// export function useStore () {
+//   return baseUseStore(key)
+// }

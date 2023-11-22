@@ -1,4 +1,5 @@
-import {IDuplicate} from "@/types/types";
+import {IDuplicate, IUserMini} from "@/types/types";
+import {useApi} from "@/hooks/useApi";
 
 
 export function chunkArray(array, chunk) {

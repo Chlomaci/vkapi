@@ -1,6 +1,15 @@
-import {IUser, IUserMini} from "@/types/types";
+import {IDuplicate, IUser, IUserMini} from "@/types/types";
 import {useStore} from "vuex";
 
+export interface IUserSearch{
+  userName: string,
+    userId: string | number,
+    autocompleteUsers: IUser[],
+    users: IUserMini[],
+    friends: IUserMini[],
+    duplicates: IDuplicate[],
+    isFriendsLoading: boolean,
+}
 interface IFriends {
   friends: IUser[],
   isLoading: boolean,

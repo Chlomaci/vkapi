@@ -20,8 +20,39 @@ export interface IUserMini {
   friends?: number,
   commonFriends?: number,
   isFriend?: boolean,
+  isAuto?: boolean,
 }
 
 export interface IDuplicate {
   string: number;
 }
+
+export interface IPostResponse{
+  response: {
+    count: number,
+    items: IPostData[],
+  }
+}
+
+interface IRepost{
+  type: string,
+  text: string,
+}
+
+export interface IPostData{
+  date: number,
+  from_id: number | string,
+  id: number,
+  text: string,
+  copy_history?: IRepost[]
+}
+
+export interface IPost{
+  date: string,
+  name: number | string,
+  id: number,
+  text: string,
+  repost?: string,
+}
+
+

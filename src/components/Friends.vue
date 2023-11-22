@@ -10,6 +10,7 @@
                v-for="user in friends"
                :key="user.id"
                :style="{ 'background-color': getCommonFriends(user)}"
+               @click="() => {$router.push(`/user/${user.id}`)}"
           >
             <div class="list__avatar">
               <img :src="user.photo_50" alt="avatar">
@@ -21,8 +22,10 @@
               <div class="list__friends"><b>Друзья: </b>{{user.friends}}</div>
             </div>
           </div>
-        </div>
-      <img :src="spinner" alt="">
+      </div>
+      <div class="list__empty" v-else>
+        <div class="list__text">Выберите пользователей слева</div>
+      </div>
     </div>
   </div>
 </template>
@@ -34,22 +37,21 @@ import {useStore} from "vuex";
 const store = useStore()
 const friends = store.getters['user/getSortedFriends'];
 
-enum commonCount {
+enum СommonCount {
   TWO = 2,
   THREE = 3,
   FOUR = 4,
-  FIVE = 5
 }
 
 function getCommonFriends(user) {
   switch (user.commonFriends) {
-    case commonCount.TWO:
+    case СommonCount.TWO:
       return "rgba(18,255,0,0.16)"
       break;
-    case commonCount.THREE:
+    case СommonCount.THREE:
       return"rgba(252,255,0,0.23)"
       break;
-    case commonCount.FOUR:
+    case СommonCount.FOUR:
       return "rgba(255,119,0,0.29)"
       break;
     default:
@@ -71,6 +73,7 @@ function getCommonFriends(user) {
   &__item.friend{
     display: grid;
     grid-template-columns: 20% 80%;
+    cursor: pointer;
   }
 
   &__data{
