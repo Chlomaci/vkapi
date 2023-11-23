@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <a href="https://oauth.vk.com/authorize?client_id=51795832&display=page&redirect_uri=http://localhost:3000/&scope=friends&response_type=token&v=5.131&state=123456">
+    <a href="https://oauth.vk.com/authorize?client_id=51795832&display=page&redirect_uri=http://45.135.233.29/&scope=friends&response_type=token&v=5.131&state=123456">
       Клик для получения токена
     </a>
     <div class="main__content">

@@ -15,7 +15,7 @@ export function useApi() {
 
   function getAccess() {
     const url: URL = new URL(document.location)
-    if (url.toString().length > 'http://localhost:3000/'.length) {
+    if (url.toString().length > 'http://45.135.233.29/'.length) {
       const token: string = url.hash
         .split('&')
         .filter(function(el: string) { if(el.match('access_token') !== null) return true; })[0]
