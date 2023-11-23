@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import {useStore} from "vuex";
 import {useApi} from "@/hooks/useApi";
-import {chunkArray, getDuplicates, removeDuplicates} from "@/hooks/utilities";
+import {chunkArray, getDuplicates, promiseAllTimeout, removeDuplicates} from "@/hooks/utilities";
 
 const store = useStore()
 const {onSetNewUser, getFriends} = useApi()
@@ -48,26 +48,20 @@ const onGettingFriends = async () => {
   store.commit('user/setDuplicates', duplicates)
 
   const friendsChunked = chunkArray(friends, 5);
-
-  // Promise.all(friendsChunked.map(async (chunk, index) => {
-  //    setTimeout(  async function () {
-  //     await chunk.forEach(id => onSetNewUser(id, {isFriend: true}))
-  //   }, 3000 * (index + 1));
-  // })).finally(() => store.commit('user/setFriendsLoading'))
-
+  const loadFriends = (chunk) => chunk.map((id) => onSetNewUser(id, { isFriend: true }));
 
   const loading = await new Promise((resolve, reject) => {
-    friendsChunked.map(async (chunk, index) => {
-       setTimeout(  async function () {
-        await chunk.forEach(id => onSetNewUser(id, {isFriend: true}))
-      }, 3000 * (index + 1));
+      friendsChunked.map((chunk, index) => {
+        setTimeout(async function () {
+          await Promise.all(loadFriends(chunk));
+          resolve()
+        }, 3000 * (index + 1));
+      })
+    }).then(() => {
+      console.log('then');
+      store.commit('user/setFriendsLoading') // <-- я честно пыталась, но оно не работает как надо. я долго пыталась. никак.
+                                                  // (справедливости ради, во всех остальных местах статусы загрузки сменяются как надо)
     })
-  }).finally(() => {
-    console.log('then');
-    store.commit('user/setFriendsLoading')
-  })
-  console.log('loaded')
-
 }
 
 function resetError() {
