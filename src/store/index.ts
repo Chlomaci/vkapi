@@ -17,6 +17,6 @@ export default createStore({
   }
 )
 
-// export function useStore () {
-//   return baseUseStore(key)
-// }
+export function useStore () {
+  return baseUseStore(key)
+}

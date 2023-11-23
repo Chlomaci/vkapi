@@ -73,7 +73,6 @@ export function useApi() {
       .then((data) => {
         const friendsData = data.response.items;
         const friendsId: number[] = friendsData.map(e => (e.id));
-
         return friendsId
       }).catch(e => console.log(e))
   }

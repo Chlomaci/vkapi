@@ -47,7 +47,7 @@ export const userModule = {
   }),
   getters: {
     getAutoNames: (state) => {
-      return state.autocompleteUsers.map(e => {
+      return state.autocompleteUsers.map((e: IUserMini) => {
         return ( {
             name: e.name,
             photo_50: e.photo_50,
@@ -56,7 +56,7 @@ export const userModule = {
       })
     },
     getSortedFriends: (state) => {
-       return state.friends.sort(function(a, b) {
+       return state.friends.sort(function(a: IUserMini, b: IUserMini) {
         if (a.name < b.name) {
           return -1;
         }
@@ -72,11 +72,11 @@ export const userModule = {
       state.autocompleteUsers.push(payload);
     },
     setNewUser(state, payload: IUserMini) {
-      const isAlreadyExistingUser: IUserMini = state.users.find(item => item.id === payload.id)
+      const isAlreadyExistingUser: IUserMini = state.users.find((item: IUserMini) => item.id === payload.id)
       if (isAlreadyExistingUser) {
         return
       } else if (payload.isFriend) {
-          const isAlreadyExistingFriend: number = state.friends.find(item => item.id === payload.id);
+          const isAlreadyExistingFriend: number = state.friends.find((item: IUserMini) => item.id === payload.id);
           if (isAlreadyExistingFriend) {
             return
           } else {
@@ -88,7 +88,7 @@ export const userModule = {
       }
     },
     setFriends(state, payload: IUserMini) {
-      const isAlreadyExistingFriend: number = state.friends.find(item => item.id === payload.id);
+      const isAlreadyExistingFriend: number = state.friends.find((item: IUserMini) => item.id === payload.id);
       if (isAlreadyExistingFriend) {
         return
       } else {
@@ -96,10 +96,10 @@ export const userModule = {
       }
     },
     setLoadedUser: (state, userName: string) => {
-        const addedUser: IUserMini = state.autocompleteUsers.find((item) => {
+        const addedUser: IUserMini = state.autocompleteUsers.find((item: IUserMini) => {
           return item.name === userName;
         });
-        const isAlreadyExisting = state.users.find(item => item.id === addedUser.id)
+        const isAlreadyExisting = state.users.find((item: IUserMini) => item.id === addedUser.id)
         if (isAlreadyExisting) {
           return
         } else {
@@ -167,11 +167,11 @@ export const userModule = {
       state.posts = []
     },
     deleteUser(state, payload: IUserMini) {
-      state.users = state.users.filter(user => user !== payload)
+      state.users = state.users.filter((user: IUserMini) => user !== payload)
     },
     deleteFriends(state, payload: number[]){
       payload.forEach(friend => {
-        state.users = state.users.filter(friend => friend.id !== payload)
+        state.users = state.users.filter((friend: IUserMini) => friend.id !== payload)
       })
     },
     resetUserFriends(state) {

@@ -73,18 +73,18 @@ import spinner from '@/assets/spinner.svg'
 const store = useStore()
 const route = useRoute()
 
-const user = store.state.user.friends.find(friend => friend.id == `${route.params.id}`)
+const user = store.state.user.friends.find((friend: IUserMini) => friend.id == `${route.params.id}`)
 const posts = store.state.user.posts;
 const {getFriends, onSetNewUser, getPosts} = useApi()
 
 async function checkFriends(id: number, users: IUserMini[]) {
   const friends = await getFriends(id);
   const usersIds: number[] = users.map(e => e.id);
-  const friendsFromUsers = friends.filter(id => usersIds.includes(id))
+  const friendsFromUsers = friends?.filter((id: number) => usersIds.includes(id))
   await onSetNewUser(friendsFromUsers, {isUserFriend: true},)
 }
 
-const loadUserData = async (id) => {
+const loadUserData = async (id: number) => {
   store.commit('user/setPostsLoading')
   await getPosts(id)
   store.commit('user/setPostsLoading')

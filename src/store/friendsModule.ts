@@ -25,7 +25,7 @@ export const friendsModule = {
   },
   mutations: {
     setFriend(state, props: IUserMini) {
-      const isAlreadyExisting = store.state.user.users.find(item => item.id === props.id)
+      const isAlreadyExisting = store.state.user.users.find((item: IUserMini) => item.id === props.id)
       if (isAlreadyExisting) {
         return
       } else {
