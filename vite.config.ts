@@ -26,6 +26,7 @@ export default defineConfig({
       },
     }),
   ],
+  base: '/vkapi/',
   define: { 'process.env': {} },
   resolve: {
     alias: {
