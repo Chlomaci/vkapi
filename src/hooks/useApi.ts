@@ -34,11 +34,49 @@ export function useApi() {
     onSetNewUser(friends, {isAuto: true});
   }
 
+  // async function onSetNewUser(id: string | number | number[], params: {isAuto?: boolean,  isFriend?: boolean, isUserFriend?: boolean},) {
+  //   return await fetch(`https://api.vk.com/method/users.get?user_ids=${id}&access_token=${store.state.token.access_token}&fields=${fields}&v=5.131`)
+  //     .then(resp => resp.json())
+  //     .then((data: data) => {
+  //       const userData: IUser[] = data.response;
+  //       userData.map(user => {
+  //         const commonFriends = checkDuplicate(store.state.user.duplicates, user.id.toString())
+  //         const name: string = user.first_name + ' ' + user.last_name;
+  //         const props: IUserMini = {
+  //           name: name,
+  //           photo_50: user.photo_50,
+  //           id: user.id,
+  //           sex:user.sex,
+  //           bdate:  user.bdate ? getAge(user.bdate.split(".")) : null,
+  //           friends: user.counters?.friends,
+  //           commonFriends: commonFriends,
+  //         }
+  //         if (params.isAuto) {
+  //           store.commit('user/setAutoUsers', props)
+  //         } else if (params.isFriend){
+  //           store.commit('user/setFriends', props)
+  //         } else if (params.isUserFriend){
+  //           store.commit('user/setUserFriends', props)
+  //         } else {
+  //           store.commit('user/setNewUser', props)
+  //         }
+  //
+  //       })
+  //
+  //     }).catch(e => {
+  //         console.log(e)
+  //     })
+  // }
+
   async function onSetNewUser(id: string | number | number[], params: {isAuto?: boolean,  isFriend?: boolean, isUserFriend?: boolean},) {
-    return await fetch(`https://api.vk.com/method/users.get?user_ids=${id}&access_token=${store.state.token.access_token}&fields=${fields}&v=5.131`)
-      .then(resp => resp.json())
-      .then((data: data) => {
-        const userData: IUser[] = data.response;
+    return await VK.Api.call('users.get', {
+      access_token: store.state.token.access_token,
+      fields: fields,
+      user_ids: id,
+      v: 5.131,
+    }, function (r) {
+      if (r.response) {
+        const userData: IUser[] = r.response;
         userData.map(user => {
           const commonFriends = checkDuplicate(store.state.user.duplicates, user.id.toString())
           const name: string = user.first_name + ' ' + user.last_name;
@@ -46,36 +84,49 @@ export function useApi() {
             name: name,
             photo_50: user.photo_50,
             id: user.id,
-            sex:user.sex,
-            bdate:  user.bdate ? getAge(user.bdate.split(".")) : null,
+            sex: user.sex,
+            bdate: user.bdate ? getAge(user.bdate.split(".")) : null,
             friends: user.counters?.friends,
             commonFriends: commonFriends,
           }
           if (params.isAuto) {
             store.commit('user/setAutoUsers', props)
-          } else if (params.isFriend){
+          } else if (params.isFriend) {
             store.commit('user/setFriends', props)
-          } else if (params.isUserFriend){
+          } else if (params.isUserFriend) {
             store.commit('user/setUserFriends', props)
           } else {
             store.commit('user/setNewUser', props)
           }
-
         })
-
-      }).catch(e => {
-          console.log(e)
-      })
+      }
+    })
   }
 
+  // async function getFriends(id: number | string = '') {
+  //   return await fetch(`https://api.vk.com/method/friends.get?user_id=${id}&order=name&access_token=${store.state.token.access_token}&fields=${fields}&v=5.131`)
+  //     .then(resp => resp.json())
+  //     .then((data) => {
+  //       const friendsData = data.response.items;
+  //       const friendsId: number[] = friendsData.map(e => (e.id));
+  //       return friendsId
+  //     }).catch(e => console.log(e))
+  // }
+
   async function getFriends(id: number | string = '') {
-    return await fetch(`https://api.vk.com/method/friends.get?user_id=${id}&order=name&access_token=${store.state.token.access_token}&fields=${fields}&v=5.131`)
-      .then(resp => resp.json())
-      .then((data) => {
-        const friendsData = data.response.items;
+    return await VK.Api.call('friends.get', {
+      access_token: store.state.token.access_token,
+      fields: fields,
+      user_id: id,
+      order: 'name',
+      v: 5.131,
+    }, function (r) {
+      if (r.response) {
+        const friendsData = r.response.items;
         const friendsId: number[] = friendsData.map(e => (e.id));
         return friendsId
-      }).catch(e => console.log(e))
+      }
+    })
   }
 
 
