@@ -20,7 +20,19 @@ concurrency:
   group: 'pages'
   cancel-in-progress: true
 
+
 jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - name: 🗑 Delete deployment
+        uses: strumwolf/delete-deployment-environment@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: github-pages
+          onlyRemoveDeployments: true
   # Single deploy job since we're just deploying
   deploy:
     environment:
