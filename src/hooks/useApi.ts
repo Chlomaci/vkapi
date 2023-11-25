@@ -126,7 +126,8 @@ export function useApi() {
     }, function (r) {
       if (r.response) {
         const friendsData = r.response.items;
-        const friendsId: number[] = friendsData.map(e => (e.id));
+        const friendsId: string = friendsData.map(e => (e.id)).join();
+        console.log(friendsId)
         return friendsId
       }
     })
