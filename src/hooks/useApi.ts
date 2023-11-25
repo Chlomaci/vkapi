@@ -77,6 +77,7 @@ export function useApi() {
     }, function (r) {
       if (r.response) {
         const userData: IUser[] = r.response;
+        console.log(userData)
         userData.map(user => {
           const commonFriends = checkDuplicate(store.state.user.duplicates, user.id.toString())
           const name: string = user.first_name + ' ' + user.last_name;
@@ -98,6 +99,8 @@ export function useApi() {
           } else {
             store.commit('user/setNewUser', props)
           }
+
+          console.log(store.state.user.autocompleteUsers)
         })
       }
     })
