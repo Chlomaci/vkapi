@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <a href="https://oauth.vk.com/authorize?client_id=51795832&display=page&redirect_uri=http://45.135.233.29/&scope=friends&response_type=token&v=5.131&state=123456">
+    <a :href="link">
       Клик для получения токена
     </a>
     <div class="main__content">
@@ -20,6 +20,9 @@ import {useApi} from "@/hooks/useApi";
 import Friends from '@/components/Friends.vue'
 import Form from '@/components/Form.vue'
 import ButtonArea from "@/components/ButtonArea.vue";
+import URL_REDIRECT from '@/config'
+
+const link = `https://oauth.vk.com/authorize?client_id=51795832&display=page&redirect_uri=${URL_REDIRECT}&scope=friends&response_type=token&v=5.131&state=123456`
 
 onMounted( async () => {
   const {getAccess} = useApi()

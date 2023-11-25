@@ -1,6 +1,7 @@
 import {IPostData, IPostResponse, IUser, IUserMini} from "@/types/types";
 import {useStore} from "vuex";
 import {checkDuplicate, getAge} from "@/hooks/utilities";
+import URL_REDIRECT from '@/config'
 
 
 export function useApi() {
@@ -15,7 +16,7 @@ export function useApi() {
 
   function getAccess() {
     const url: URL = new URL(document.location)
-    if (url.toString().length > 'http://45.135.233.29/'.length) {
+    if (url.toString().length > URL_REDIRECT.length) {
       const token: string = url.hash
         .split('&')
         .filter(function(el: string) { if(el.match('access_token') !== null) return true; })[0]
