@@ -29,8 +29,8 @@ export function useApi() {
     }
   }
 
-  async function onGetAutoUsers() {
-    const friends = await getFriends();
+   function onGetAutoUsers() {
+    const friends: string = getFriends();
     onSetNewUser(friends, {isAuto: true});
   }
 
@@ -117,7 +117,7 @@ export function useApi() {
   // }
 
   async function getFriends(id: number | string = '') {
-    return await VK.Api.call('friends.get', {
+    let friendsId = await VK.Api.call('friends.get', {
       access_token: store.state.token.access_token,
       fields: fields,
       user_id: id,
@@ -131,6 +131,7 @@ export function useApi() {
         return friendsId
       }
     })
+    return friendsId;
   }
 
 
