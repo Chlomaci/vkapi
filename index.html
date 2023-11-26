@@ -10,29 +10,6 @@
 
 <body>
     <div id="vk_api_transport" style="height: 0px"></div>
-    <script type="text/javascript">
-        function loadVKAPI() {
-            return new Promise(function(resolve, reject) {
-                var el = document.createElement("script");
-                el.type = "text/javascript";
-                el.src = "https://vk.com/js/api/openapi.js?169";
-                el.onload = resolve;
-                el.onerror = reject;
-                document.getElementById("vk_api_transport").appendChild(el);
-            });
-        }
-
-        loadVKAPI().then(function() {
-            VK.init({
-                apiId: 51795832,
-                status: true,
-                onlyWidgets: true,
-            });
-
-        }).catch(function(error) {
-            console.error("Ошибка при загрузке скрипта Open API:", error);
-        });
-    </script>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
 </body>
