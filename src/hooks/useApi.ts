@@ -2,6 +2,7 @@ import {IPostData, IUser, IUserMini} from "@/types/types";
 import {useStore} from "vuex";
 import {checkDuplicate, getAge} from "@/hooks/utilities";
 import URL_REDIRECT from '@/config'
+import {callVKAPI} from "@/api";
 
 
 export function useApi() {
@@ -34,21 +35,36 @@ export function useApi() {
     onSetNewUser(friends, {isAuto: true})
   }
 
-  async function getFriends(id: number | string = '') {
-    return new Promise(resolve => {
-      VK.Api.call('friends.get', {
-        access_token: store.state.token.access_token,
-        fields: fields,
-        user_id: id,
-        order: 'name',
-        v: 5.131,
-      }, function (r) {
-        if (r.response) {
-          const friendsData = r.response.items;
-          const friendsId: string = friendsData.map(e => (e.id)).join();
-          resolve(friendsId)
-        }
-      })
+  // async function getFriends(id: number | string = '') {
+  //   return new Promise(resolve => {
+  //     VK.Api.call('friends.get', {
+  //       access_token: store.state.token.access_token,
+  //       fields: fields,
+  //       user_id: id,
+  //       order: 'name',
+  //       v: 5.131,
+  //     }, function (r) {
+  //       if (r.response) {
+  //         const friendsData = r.response.items;
+  //         const friendsId: string = friendsData.map(e => (e.id)).join();
+  //         resolve(friendsId)
+  //       }
+  //     })
+  //   })
+  // }
+  //
+  async function getFriends(id: number | string = ''){
+    return callVKAPI('friends.get', {
+      access_token: store.state.token.access_token,
+      fields: fields,
+      user_id: id,
+      order: 'name',
+      v: 5.131,
+    }, function (r) {
+      if (r.response) {
+        const friendsData = r.response.items;
+        const friendsId: string = friendsData.map(e => (e.id)).join();
+      }
     })
   }
 
