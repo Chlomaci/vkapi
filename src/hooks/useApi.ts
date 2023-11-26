@@ -55,18 +55,20 @@ export function useApi() {
   // }
   //
   async function getFriends(id: number | string = ''){
-    return callAPI('friends.get', {
-      access_token: store.state.token.access_token,
-      fields: fields,
-      user_id: id,
-      order: 'name',
-      v: 5.131,
-    }, function (r) {
-      if (r.response) {
-        const friendsData = r.response.items;
-        const friendsId: string = friendsData.map(e => (e.id)).join();
-        return friendsId
-      }
+    return new Promise (resolve => {
+      callAPI('friends.get', {
+        access_token: store.state.token.access_token,
+        fields: fields,
+        user_id: id,
+        order: 'name',
+        v: 5.131,
+      }, function (r) {
+        if (r.response) {
+          const friendsData = r.response.items;
+          const friendsId: string = friendsData.map(e => (e.id)).join();
+          resolve(friendsId)
+        }
+      })
     })
   }
 
