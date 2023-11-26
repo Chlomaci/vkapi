@@ -5,9 +5,10 @@ interface errors {
   nullValues: boolean,
   nullUsers: boolean,
   nullAccess: boolean,
+  userNotFound: boolean,
 }
 
-interface IUserSearch {
+export interface IUserSearch {
   userName: string,
   userId: string | number,
   autocompleteUsers: IUser[],
@@ -43,6 +44,7 @@ export const userModule = {
       nullValues: false,
       nullUsers: false,
       nullAccess: false,
+      userNotFound: false,
     }
   }),
   getters: {
@@ -138,6 +140,7 @@ export const userModule = {
       state.isUserFriendsLoading = !state.isUserFriendsLoading;
     },
     setPostsLoading(state){
+      console.log('post loading set')
       state.isPostsLoading = !state.isPostsLoading;
     },
     setDuplicates(state, payload: IDuplicate[]){
@@ -155,12 +158,16 @@ export const userModule = {
     setNullAccessError(state) {
       state.errors.nullAccess = true;
     },
+    setUserNotFoundError(state) {
+      state.errors.userNotFound = true;
+    },
     resetErrors(state) {
       state.errors = {
         twoValues: false,
         nullValues: false,
         nullUsers: false,
         nullAccess: false,
+        userNotFound: false,
       }
     },
     resetPosts(state){
@@ -169,9 +176,9 @@ export const userModule = {
     deleteUser(state, payload: IUserMini) {
       state.users = state.users.filter((user: IUserMini) => user !== payload)
     },
-    deleteFriends(state, payload: number[]){
-      payload.forEach(friend => {
-        state.users = state.users.filter((friend: IUserMini) => friend.id !== payload)
+    deleteFriends(state, payload: string[]){
+      payload.forEach(friendId => {
+        state.friends = state.friends.filter((friend: IUserMini) => friend.id !== friendId)
       })
     },
     resetUserFriends(state) {

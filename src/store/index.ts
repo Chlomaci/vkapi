@@ -2,7 +2,7 @@ import { InjectionKey } from 'vue'
 import {createStore, useStore as baseUseStore, Store} from "vuex";
 import {tokenModule} from "@/store/tokenModule";
 import {userModule} from "@/store/userModule";
-import {friendsModule, IUserSearch} from "@/store/friendsModule";
+import {IUserSearch} from "@/store/userModule";
 
 export const key: InjectionKey<Store<IUserSearch>> = Symbol()
 

@@ -3,7 +3,7 @@
     <div v-if="users.length > 0"
          class="list__users">
       <div class="loader__mini" v-show="isLoading">
-        <img :src="spinner" alt="">
+        <img :src="spinner" alt="loading">
       </div>
       <div class="list__item"
           :style="[canDelete ? {justifyContent: 'space-between'} : null]"
@@ -17,8 +17,8 @@
         <button v-show="canDelete" class="list__delete" :disabled="store.state.user.isFriendsLoading" @click="onUserDelete(user)"></button>
       </div>
     </div>
-    <div class="list__empty" v-else-if="props.users.length == 0 && isLoading">
-      <img :src="spinner" alt="">
+    <div class="list__empty" v-else-if="props.users.length == 0 && isLoading && !userNotFound">
+      <img :src="spinner" alt="loading">
     </div>
     <div class="list__empty" v-else-if="!isLoading">
         <div class="list__text">{{text}}</div>
@@ -37,6 +37,7 @@ interface Props {
   text: string,
   canDelete: boolean,
   isLoading: boolean,
+  userNotFound?: boolean,
 }
 
 const props = defineProps<Props>();
@@ -46,7 +47,8 @@ const {getFriends} = useApi();
 const onUserDelete = async (user) => {
   store.commit('user/deleteUser', user);
   const deletedUserFriends = await getFriends(user.id);
-  await store.commit('user/deleteFriends', deletedUserFriends);
+  const friendsArr = deletedUserFriends.split(",")
+  store.commit('user/deleteFriends', friendsArr);
 }
 
 </script>

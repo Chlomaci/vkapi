@@ -2,7 +2,7 @@ export interface IUser {
   first_name: string,
   last_name: string,
   photo_50: string,
-  id: number,
+  id: string,
   sex: number,
   bdate?: string,
   friends?: number
@@ -14,7 +14,7 @@ export interface IUser {
 export interface IUserMini {
   name: string,
   photo_50: string,
-  id: number,
+  id: string,
   sex: number,
   bdate?: number | null,
   friends?: number,

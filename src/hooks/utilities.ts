@@ -13,20 +13,19 @@ export function getDuplicates(array: string[]) {
   for (const item of array) {
     countItems[item] = countItems[item] ? countItems[item] + 1 : 1;
   }
-  const duplicateIdsStr = Object.keys(countItems).filter((item) => countItems[item] > 1);
+  const duplicateIds = Object.keys(countItems).filter((item) => countItems[item] > 1);
 
   const duplicates = {};
   for (const key in countItems){
-    if (duplicateIdsStr.includes(key)){
+    if (duplicateIds.includes(key)){
       duplicates[key] = countItems[key];
     }
   }
-  const duplicateIds = duplicateIdsStr.map(i => Number(i))
 
   return {duplicates, duplicateIds}
 }
 
-export function removeDuplicates(friends: number[], duplicates: number[]){
+export function removeDuplicates(friends: string[], duplicates: string[]){
   const friendsWithoutDuplicates = friends.filter(e => (!duplicates.includes(e)));
   const result = friendsWithoutDuplicates.concat(duplicates)
   return result;

@@ -7,7 +7,7 @@
         <div v-if="store.state.user.users.length > 0"
              class="list__users">
           <div class="list__item friend"
-               v-for="user in friends"
+               v-for="user in store.state.user.friends"
                :key="user.id"
                :style="{ 'background-color': getCommonFriends(user)}"
                @click="() => {$router.push(`/user/${user.id}`)}"

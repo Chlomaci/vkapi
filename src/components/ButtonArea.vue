@@ -6,6 +6,7 @@
         </v-btn>
         <div class="error" v-show="store.state.user.errors.twoValues">Введите что-то одно</div>
         <div class="error" v-show="store.state.user.errors.nullValues">Введите имя или id</div>
+        <div class="error" v-show="store.state.user.errors.userNotFound">Пользователь не найден</div>
       </div>
       <div class="search__add">
         <v-btn variant="tonal" @click='onBuilding' width="100%" :disabled="store.state.user.isFriendsLoading">
@@ -20,7 +21,7 @@
 <script setup lang="ts">
 import {useStore} from "vuex";
 import {useApi} from "@/hooks/useApi";
-import {chunkArray, getDuplicates, promiseAllTimeout, removeDuplicates} from "@/hooks/utilities";
+import {chunkArray, getDuplicates, removeDuplicates} from "@/hooks/utilities";
 
 const store = useStore()
 const {onSetNewUser, getFriends} = useApi()
@@ -40,25 +41,23 @@ const onBuilding = async () => {
 
 const onGettingFriends = async () => {
   const allFriendsArrs = await Promise.all(store.state.user.users.map(async e => {
-    return await getFriends(e.id)
+    return await getFriends(e.id).then(friends => friends.split(","))
   }))
   const allFriends = allFriendsArrs.flat()
   const {duplicates, duplicateIds} = getDuplicates(allFriends);
   const friends = removeDuplicates(allFriends, duplicateIds);
   store.commit('user/setDuplicates', duplicates)
-
   const friendsChunked = chunkArray(friends, 5);
   const loadFriends = (chunk) => chunk.map((id) => onSetNewUser(id, { isFriend: true }));
 
   const loading = await new Promise((resolve, reject) => {
-      friendsChunked.map((chunk, index) => {
+     const friendsLoaded = friendsChunked.map((chunk, index) => {
         setTimeout(async function () {
           await Promise.all(loadFriends(chunk));
-          resolve()
         }, 3000 * (index + 1));
       })
+    resolve()
     }).then(() => {
-      console.log('then');
       store.commit('user/setFriendsLoading') // <-- я честно пыталась, но оно не работает как надо. я долго пыталась. никак.
                                                   // (справедливости ради, во всех остальных местах статусы загрузки сменяются как надо)
     })
@@ -94,8 +93,7 @@ const onSubmit = async () => {
     isNullValues()
   } else if (store.state.user.userId) {
     store.commit('user/setUserLoading')
-    await onSetNewUser(store.state.user.userId, {isAuto: false})
-    store.commit('user/setUserLoading');
+    await onSetNewUser(store.state.user.userId, {isNewUser: true})
     store.commit('user/setUserId', '')
   } else if (store.state.user.userName){
     await store.commit('user/setLoadedUser', store.state.user.userName);
