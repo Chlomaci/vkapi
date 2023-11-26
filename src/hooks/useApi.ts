@@ -64,6 +64,7 @@ export function useApi() {
       if (r.response) {
         const friendsData = r.response.items;
         const friendsId: string = friendsData.map(e => (e.id)).join();
+        return friendsId
       }
     })
   }
