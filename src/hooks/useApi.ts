@@ -3,6 +3,7 @@ import {useStore} from "vuex";
 import {checkDuplicate, getAge} from "@/hooks/utilities";
 import URL_REDIRECT from '@/config'
 import {callVKAPI} from "@/api";
+import callAPI from "@/hooks/callApi";
 
 
 export function useApi() {
@@ -54,7 +55,7 @@ export function useApi() {
   // }
   //
   async function getFriends(id: number | string = ''){
-    return callVKAPI('friends.get', {
+    return callAPI('friends.get', {
       access_token: store.state.token.access_token,
       fields: fields,
       user_id: id,
