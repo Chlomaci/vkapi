@@ -22,10 +22,3 @@ export function initVKAPI(apiId) {
   });
 }
 
-export function callVKAPI(method, params) {
-  return new Promise(function(resolve, reject) {
-    VK.Api.call(method, params, function(response) {
-      resolve(response);
-    });
-  });
-}
