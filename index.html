@@ -11,14 +11,6 @@
 <body>
     <div id="vk_api_transport" style="height: 0px"></div>
     <script type="text/javascript">
-        window.vkAsyncInit = function() {
-            VK.init({
-                apiId: 51795832,
-                status: true,
-                onlyWidgets: true,
-            });
-        };
-
         setTimeout(function() {
             var el = document.createElement("script");
             el.type = "text/javascript";
@@ -26,9 +18,18 @@
             el.async = true;
             document.getElementById("vk_api_transport").appendChild(el);
         }, 0);
+
+        window.vkAsyncInit = function() {
+            VK.init({
+                apiId: 51795832,
+                status: true,
+                onlyWidgets: true,
+            });
+        };
     </script>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
 </body>
 
 </html>
+
