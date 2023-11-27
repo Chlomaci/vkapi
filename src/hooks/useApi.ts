@@ -55,7 +55,7 @@ export function useApi() {
       user_ids: id,
       v: 5.131,
     }, function (r) {
-      if (r.response.length > 0) {
+      if (r && r.response.length > 0) {
         const userData: IUser[] = r.response;
         userData.map(user => {
           const commonFriends = checkDuplicate(store.state.user.duplicates, user.id.toString())
