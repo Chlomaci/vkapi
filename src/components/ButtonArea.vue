@@ -51,16 +51,22 @@ const onGettingFriends = async () => {
   const loadFriends = (chunk) => chunk.map((id) => onSetNewUser(id, { isFriend: true }));
 
   const loading = await new Promise((resolve, reject) => {
-     const friendsLoaded = friendsChunked.map((chunk, index) => {
+    const friendPromises = friendsChunked.map((chunk, index) => {
+      return new Promise(async function (resolve) {
         setTimeout(async function () {
           await Promise.all(loadFriends(chunk));
+          resolve();
         }, 3000 * (index + 1));
+      });
+    });
+
+    Promise.all(friendPromises)
+      .then(() => {
+        store.commit('user/setFriendsLoading');
+        resolve();
       })
-    resolve()
-    }).then(() => {
-      store.commit('user/setFriendsLoading') // <-- я честно пыталась, но оно не работает как надо. я долго пыталась. никак.
-                                                  // (справедливости ради, во всех остальных местах статусы загрузки сменяются как надо)
-    })
+      .catch(reject);
+  });
 }
 
 function resetError() {

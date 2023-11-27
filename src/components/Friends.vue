@@ -3,11 +3,13 @@
     <h3 class="subtitle">
       Друзья пользователей
     </h3>
+
     <div class="list__content">
+      <v-progress-linear color="primary" v-show="store.state.user.isFriendsLoading" indeterminate></v-progress-linear>
         <div v-if="store.state.user.users.length > 0"
              class="list__users">
           <div class="list__item friend"
-               v-for="user in friends"
+               v-for="user in store.getters['user/getSortedFriends']"
                :key="user.id"
                :style="{ 'background-color': getCommonFriends(user)}"
                @click="() => {$router.push(`/user/${user.id}`)}"
@@ -68,6 +70,10 @@ function getCommonFriends(user) {
   .friends  &__content{
     width: 20vw;
     height: 28vw;
+    padding: 0px;
+  }
+  &__users{
+    padding: 5px 0px;
   }
   &__item.friend{
     display: grid;
