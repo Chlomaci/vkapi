@@ -45,7 +45,6 @@ const onGettingFriends = async () => {
   const allFriendsArrs = await Promise.all(store.state.user.users.map(async e => {
     return await getFriends(e.id).then(friends => friends.split(","))
   }))
-  console.log(allFriendsArrs)
   if (allFriendsArrs.length !== 1 && allFriendsArrs[0] !== ''){
     const allFriends = allFriendsArrs.flat()
     const {duplicates, duplicateIds} = getDuplicates(allFriends);
