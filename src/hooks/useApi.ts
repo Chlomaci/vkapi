@@ -60,7 +60,7 @@ export function useApi() {
         userData.map(user => {
           const commonFriends = checkDuplicate(store.state.user.duplicates, user.id.toString())
           const name: string = user.first_name + ' ' + user.last_name;
-          if (name === 'DELETED ') {
+          if (!params.isAuto && name === 'DELETED ') {
             store.commit('user/setUserNotFoundError')
             if (store.state.user.isUserLoading) {
               store.commit('user/setUserLoading');
