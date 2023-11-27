@@ -4,18 +4,18 @@
         <v-btn variant="tonal" @click="onSubmit" width="100%" :disabled="store.state.user.isFriendsLoading">
           Добавить
         </v-btn>
-        <div class="error" v-show="twoValues">Введите что-то одно</div>
-        <div class="error" v-show="nullValues">Введите имя или id</div>
+        <div class="error" v-show="store.state.user.errors.twoValues">Введите что-то одно</div>
+        <div class="error" v-show="store.state.user.errors.nullValues">Введите имя или id</div>
         <div class="error" v-show="store.state.user.errors.userNotFound">Пользователь не найден</div>
+        <div class="error" v-show="store.state.user.errors.isHiddenFriends">Друзья скрыты</div>
       </div>
       <div class="search__add">
         <v-btn variant="tonal" @click='onBuilding' width="100%" :disabled="store.state.user.isFriendsLoading">
           Построить
         </v-btn>
-        <div class="error" v-show="nullUsers">Выберите пользователей</div>
+        <div class="error" v-show="store.state.user.errors.nullUsers">Выберите пользователей</div>
       </div>
-      <div class="error" v-show="nullAccess">Пожалуйста, сначала получите токен</div>
-      <div class="error" v-show="privateFriends">Друзья скрыты</div>
+      <div class="error" v-show="store.state.user.errors.nullAccess">Пожалуйста, сначала получите токен</div>
     </div>
 </template>
 
@@ -23,20 +23,14 @@
 import {useStore} from "vuex";
 import {useApi} from "@/hooks/useApi";
 import {chunkArray, getDuplicates, removeDuplicates} from "@/hooks/utilities";
-import {ref} from "vue";
 
 const store = useStore()
 const {onSetNewUser, getFriends} = useApi()
 
-const privateFriends = ref(false)
-const nullValues = ref(false)
-const twoValues = ref(false)
-const nullUsers = ref (false)
-const nullAccess = ref(false)
 
 const onBuilding = async () => {
   if (!store.state.token.access_token) {
-    isNullAccess();
+    nullAccess();
     return
   } else if (!store.state.user.users.length > 0) {
     isNullUsers();
@@ -78,8 +72,7 @@ const onGettingFriends = async () => {
         .catch(reject);
     });
   } else {
-    console.log('durov')
-    privateFriends.value = true;
+    store.commit('user/setHiddenFriends');
     store.commit('user/setFriendsLoading');
     return
   }
@@ -87,34 +80,28 @@ const onGettingFriends = async () => {
 
 function resetError() {
   store.commit('user/resetErrors')
-  nullAccess.value = false
-  nullUsers.value = false
-  nullValues.value = false
-  twoValues.value = false
-  privateFriends.value = false
 }
 
 function isNullUsers(){
-  nullUsers.value = true
+  store.commit('user/setNullUsersError');
 }
 
 function isNullValues() {
-  nullValues.value = true
+  store.commit('user/setNullValuesError');
 }
 
 function isTwoValues() {
-  twoValues.value = true
+  store.commit('user/setTwoValuesError');
 }
 
-function isNullAccess() {
-  nullAccess.value = true
+function nullAccess() {
+  store.commit('user/setNullAccessError');
 }
-
 
 const onSubmit = async () => {
   resetError();
   if (!store.state.token.access_token) {
-    isNullAccess();
+    nullAccess();
   } else if (store.state.user.userName && store.state.user.userId) {
     isTwoValues();
   } else if (!store.state.user.userName && !store.state.user.userId) {

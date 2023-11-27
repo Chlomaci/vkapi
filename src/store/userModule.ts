@@ -1,7 +1,12 @@
 import {IDuplicate, IPost, IPostData, IUser, IUserMini} from "@/types/types";
 
 interface errors {
+  twoValues: boolean,
+  nullValues: boolean,
+  nullUsers: boolean,
+  nullAccess: boolean,
   userNotFound: boolean,
+  isHiddenFriends: boolean,
 }
 
 export interface IUserSearch {
@@ -36,7 +41,12 @@ export const userModule = {
     posts: [],
     isPostsLoading: false,
     errors: {
+      twoValues: false,
+      nullValues: false,
+      nullUsers: false,
+      nullAccess: false,
       userNotFound: false,
+      isHiddenFriends: false,
     }
   }),
   getters: {
@@ -153,9 +163,17 @@ export const userModule = {
     setUserNotFoundError(state) {
       state.errors.userNotFound = true;
     },
+    setHiddenFriends(state) {
+      state.errors.isHiddenFriends = true;
+    },
     resetErrors(state) {
       state.errors = {
+        twoValues: false,
+        nullValues: false,
+        nullUsers: false,
+        nullAccess: false,
         userNotFound: false,
+        isHiddenFriends: false,
       }
     },
     resetPosts(state){
