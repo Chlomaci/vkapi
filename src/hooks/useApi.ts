@@ -75,7 +75,6 @@ export function useApi() {
             store.commit('user/setFriends', props)
           } else if (params.isUserFriend) {
             store.commit('user/setUserFriends', props)
-            store.commit('user/setUserFriendsLoading');
           } else if (params.isNewUser) {
             store.commit('user/setNewUser', props)
             store.commit('user/setUserLoading');
