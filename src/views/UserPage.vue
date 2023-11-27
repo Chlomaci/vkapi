@@ -77,14 +77,23 @@ const user = store.state.user.friends.find((friend: IUserMini) => friend.id == `
 const posts = store.state.user.posts;
 const {getFriends, onSetNewUser, getPosts} = useApi()
 
-async function checkFriends(id: string, users: IUserMini[]) {
-  const friends = await getFriends(id);
-  const friendsArr = friends.split(",")
-  const usersIds: string[] = users.map(e => e.id);
-  const friendsFromUsers = friendsArr.filter((id: string) => usersIds.includes(id))
-  await onSetNewUser(friendsFromUsers, {isUserFriend: true},)
+function checkFriends(id: string, users: IUserMini[]) {
+  getFriends(id)
+    .then((friends) => {
+      const friendsArr = friends.split(",");
+      const usersIds: string[] = users.map((e) => e.id);
+      const friendsFromUsers = friendsArr.filter((id: string) =>
+        usersIds.includes(id)
+      );
+      return onSetNewUser(friendsFromUsers, {isUserFriend: true});
+    })
+    .then(() => {
+      store.commit('user/setUserFriendsLoading');
+    })
+    .catch((error) => {
+      console.log(error)
+    });
 }
-
 const loadUserData = async (id: string) => {
   await getPosts(id)
   await checkFriends(id, store.state.user.users);
