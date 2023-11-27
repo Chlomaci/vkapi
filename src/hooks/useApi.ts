@@ -48,7 +48,7 @@ export function useApi() {
     })
   }
 
-  async function onSetNewUser(id: string | number | number[], params: {isAuto?: boolean,  isFriend?: boolean, isUserFriend?: boolean, isNewUser?: boolean},) {
+  async function onSetNewUser(id: string | number | number[], params: {isAuto?: false,  isFriend?: boolean, isUserFriend?: boolean, isNewUser?: boolean},) {
     return callAPI('users.get', {
       access_token: store.state.token.access_token,
       fields: fields,
@@ -60,7 +60,8 @@ export function useApi() {
         userData.map(user => {
           const commonFriends = checkDuplicate(store.state.user.duplicates, user.id.toString())
           const name: string = user.first_name + ' ' + user.last_name;
-          if (params.isNewUser || params.isFriend && name === 'DELETED ') {
+          if (!params.isAuto && name === 'DELETED ') {
+            console.log('deleted')
             store.commit('user/setUserNotFoundError')
             if (store.state.user.isUserLoading) {
               store.commit('user/setUserLoading');
