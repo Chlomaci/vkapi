@@ -45,36 +45,30 @@ const onGettingFriends = async () => {
   const allFriendsArrs = await Promise.all(store.state.user.users.map(async e => {
     return await getFriends(e.id).then(friends => friends.split(","))
   }))
-  if (allFriendsArrs.length !== 1 && allFriendsArrs[0] !== ''){
-    const allFriends = allFriendsArrs.flat()
-    const {duplicates, duplicateIds} = getDuplicates(allFriends);
-    const friends = removeDuplicates(allFriends, duplicateIds);
-    store.commit('user/setDuplicates', duplicates)
-    const friendsChunked = chunkArray(friends, 5);
-    const loadFriends = (chunk) => chunk.map((id) => onSetNewUser(id, { isFriend: true }));
+  const allFriends = allFriendsArrs.flat()
+  const {duplicates, duplicateIds} = getDuplicates(allFriends);
+  const friends = removeDuplicates(allFriends, duplicateIds);
+  store.commit('user/setDuplicates', duplicates)
+  const friendsChunked = chunkArray(friends, 5);
+  const loadFriends = (chunk) => chunk.map((id) => onSetNewUser(id, { isFriend: true }));
 
-    const loading = await new Promise((resolve, reject) => {
-      const friendPromises = friendsChunked.map((chunk, index) => {
-        return new Promise(async function (resolve) {
-          setTimeout(async function () {
-            await Promise.all(loadFriends(chunk));
-            resolve();
-          }, 3000 * (index + 1));
-        });
-      });
-
-      Promise.all(friendPromises)
-        .then(() => {
-          store.commit('user/setFriendsLoading');
+  const loading = await new Promise((resolve, reject) => {
+    const friendPromises = friendsChunked.map((chunk, index) => {
+      return new Promise(async function (resolve) {
+        setTimeout(async function () {
+          await Promise.all(loadFriends(chunk));
           resolve();
-        })
-        .catch(reject);
+        }, 3000 * (index + 1));
+      });
     });
-  } else {
-    store.commit('user/setHiddenFriends');
-    store.commit('user/setFriendsLoading');
-    return
-  }
+
+    Promise.all(friendPromises)
+      .then(() => {
+        store.commit('user/setFriendsLoading');
+        resolve();
+      })
+      .catch(reject);
+  });
 }
 
 function resetError() {
