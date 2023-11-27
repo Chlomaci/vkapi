@@ -60,6 +60,13 @@ export function useApi() {
         userData.map(user => {
           const commonFriends = checkDuplicate(store.state.user.duplicates, user.id.toString())
           const name: string = user.first_name + ' ' + user.last_name;
+          if (name === 'DELETED ') {
+            store.commit('user/setUserNotFoundError')
+            if (store.state.user.isUserLoading) {
+              store.commit('user/setUserLoading');
+            }
+            return
+          }
           const props: IUserMini = {
             name: name,
             photo_50: user.photo_50,
@@ -82,6 +89,7 @@ export function useApi() {
           }
         })
       } else {
+        console.log(r.error)
         store.commit('user/setUserNotFoundError')
         if (store.state.user.isUserLoading) {
           store.commit('user/setUserLoading');

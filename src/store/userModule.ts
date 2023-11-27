@@ -1,10 +1,6 @@
 import {IDuplicate, IPost, IPostData, IUser, IUserMini} from "@/types/types";
 
 interface errors {
-  twoValues: boolean,
-  nullValues: boolean,
-  nullUsers: boolean,
-  nullAccess: boolean,
   userNotFound: boolean,
 }
 
@@ -40,10 +36,6 @@ export const userModule = {
     posts: [],
     isPostsLoading: false,
     errors: {
-      twoValues: false,
-      nullValues: false,
-      nullUsers: false,
-      nullAccess: false,
       userNotFound: false,
     }
   }),
@@ -163,10 +155,6 @@ export const userModule = {
     },
     resetErrors(state) {
       state.errors = {
-        twoValues: false,
-        nullValues: false,
-        nullUsers: false,
-        nullAccess: false,
         userNotFound: false,
       }
     },

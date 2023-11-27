@@ -4,17 +4,18 @@
         <v-btn variant="tonal" @click="onSubmit" width="100%" :disabled="store.state.user.isFriendsLoading">
           Добавить
         </v-btn>
-        <div class="error" v-show="store.state.user.errors.twoValues">Введите что-то одно</div>
-        <div class="error" v-show="store.state.user.errors.nullValues">Введите имя или id</div>
+        <div class="error" v-show="twoValues">Введите что-то одно</div>
+        <div class="error" v-show="nullValues">Введите имя или id</div>
         <div class="error" v-show="store.state.user.errors.userNotFound">Пользователь не найден</div>
       </div>
       <div class="search__add">
         <v-btn variant="tonal" @click='onBuilding' width="100%" :disabled="store.state.user.isFriendsLoading">
           Построить
         </v-btn>
-        <div class="error" v-show="store.state.user.errors.nullUsers">Выберите пользователей</div>
+        <div class="error" v-show="nullUsers">Выберите пользователей</div>
       </div>
-      <div class="error" v-show="store.state.user.errors.nullAccess">Пожалуйста, сначала получите токен</div>
+      <div class="error" v-show="nullAccess">Пожалуйста, сначала получите токен</div>
+      <div class="error" v-show="privateFriends">Друзья скрыты</div>
     </div>
 </template>
 
@@ -22,13 +23,20 @@
 import {useStore} from "vuex";
 import {useApi} from "@/hooks/useApi";
 import {chunkArray, getDuplicates, removeDuplicates} from "@/hooks/utilities";
+import {ref} from "vue";
 
 const store = useStore()
 const {onSetNewUser, getFriends} = useApi()
 
+const privateFriends = ref(false)
+const nullValues = ref(false)
+const twoValues = ref(false)
+const nullUsers = ref (false)
+const nullAccess = ref(false)
+
 const onBuilding = async () => {
   if (!store.state.token.access_token) {
-    nullAccess();
+    isNullAccess();
     return
   } else if (!store.state.user.users.length > 0) {
     isNullUsers();
@@ -43,56 +51,70 @@ const onGettingFriends = async () => {
   const allFriendsArrs = await Promise.all(store.state.user.users.map(async e => {
     return await getFriends(e.id).then(friends => friends.split(","))
   }))
-  const allFriends = allFriendsArrs.flat()
-  const {duplicates, duplicateIds} = getDuplicates(allFriends);
-  const friends = removeDuplicates(allFriends, duplicateIds);
-  store.commit('user/setDuplicates', duplicates)
-  const friendsChunked = chunkArray(friends, 5);
-  const loadFriends = (chunk) => chunk.map((id) => onSetNewUser(id, { isFriend: true }));
+  console.log(allFriendsArrs)
+  if (allFriendsArrs.length !== 1 && allFriendsArrs[0] !== ''){
+    const allFriends = allFriendsArrs.flat()
+    const {duplicates, duplicateIds} = getDuplicates(allFriends);
+    const friends = removeDuplicates(allFriends, duplicateIds);
+    store.commit('user/setDuplicates', duplicates)
+    const friendsChunked = chunkArray(friends, 5);
+    const loadFriends = (chunk) => chunk.map((id) => onSetNewUser(id, { isFriend: true }));
 
-  const loading = await new Promise((resolve, reject) => {
-    const friendPromises = friendsChunked.map((chunk, index) => {
-      return new Promise(async function (resolve) {
-        setTimeout(async function () {
-          await Promise.all(loadFriends(chunk));
-          resolve();
-        }, 3000 * (index + 1));
+    const loading = await new Promise((resolve, reject) => {
+      const friendPromises = friendsChunked.map((chunk, index) => {
+        return new Promise(async function (resolve) {
+          setTimeout(async function () {
+            await Promise.all(loadFriends(chunk));
+            resolve();
+          }, 3000 * (index + 1));
+        });
       });
-    });
 
-    Promise.all(friendPromises)
-      .then(() => {
-        store.commit('user/setFriendsLoading');
-        resolve();
-      })
-      .catch(reject);
-  });
+      Promise.all(friendPromises)
+        .then(() => {
+          store.commit('user/setFriendsLoading');
+          resolve();
+        })
+        .catch(reject);
+    });
+  } else {
+    console.log('durov')
+    privateFriends.value = true;
+    store.commit('user/setFriendsLoading');
+    return
+  }
 }
 
 function resetError() {
   store.commit('user/resetErrors')
+  nullAccess.value = false
+  nullUsers.value = false
+  nullValues.value = false
+  twoValues.value = false
+  privateFriends.value = false
 }
 
 function isNullUsers(){
-  store.commit('user/setNullUsersError');
+  nullUsers.value = true
 }
 
 function isNullValues() {
-  store.commit('user/setNullValuesError');
+  nullValues.value = true
 }
 
 function isTwoValues() {
-  store.commit('user/setTwoValuesError');
+  twoValues.value = true
 }
 
-function nullAccess() {
-  store.commit('user/setNullAccessError');
+function isNullAccess() {
+  nullAccess.value = true
 }
+
 
 const onSubmit = async () => {
   resetError();
   if (!store.state.token.access_token) {
-    nullAccess();
+    isNullAccess();
   } else if (store.state.user.userName && store.state.user.userId) {
     isTwoValues();
   } else if (!store.state.user.userName && !store.state.user.userId) {
